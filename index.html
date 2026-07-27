@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Maanster Market</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛍️</text></svg>">
+<meta name="theme-color" content="#7C3AED">
+<style>
+  :root{--accent:#7C3AED;--accent2:#E11D48;--ink:#131313;--soft:#6B6B6B}
+  *{box-sizing:border-box;margin:0}
+  body{font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#FAFAF7;color:var(--ink);
+    min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{width:min(420px,100%);background:#fff;border-radius:20px;padding:40px 32px;text-align:center;
+    box-shadow:0 8px 40px rgba(19,19,19,.08)}
+  .logo{width:72px;height:72px;border-radius:20px;margin:0 auto 20px;display:flex;align-items:center;
+    justify-content:center;font-size:38px;background:linear-gradient(135deg,#7C3AED,#E11D48)}
+  h1{font-size:26px;letter-spacing:-.5px;margin-bottom:6px}
+  .tag{color:var(--accent2);font-weight:600;font-size:14px;margin-bottom:24px}
+  input{width:100%;padding:14px 16px;font-size:16px;border:1.5px solid #e5e5e0;border-radius:12px;
+    margin-bottom:12px;outline:none;text-align:center}
+  input:focus{border-color:var(--accent)}
+  button{width:100%;padding:14px;font-size:16px;font-weight:700;color:#fff;background:var(--accent);
+    border:none;border-radius:12px;cursor:pointer}
+  .err{color:var(--accent2);font-size:13px;min-height:18px;margin-top:10px}
+  .deploying{display:none}
+  .bar{height:6px;background:#eee;border-radius:3px;overflow:hidden;margin:26px 0 14px}
+  .bar i{display:block;height:100%;width:35%;border-radius:3px;background:linear-gradient(90deg,#7C3AED,#E11D48);
+    animation:slide 1.6s ease-in-out infinite}
+  @keyframes slide{0%{margin-left:-35%}100%{margin-left:100%}}
+  .soft{color:var(--soft);font-size:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="logo">🛍️</div>
+  <h1>Maanster Market</h1>
+  <div class="tag">Pre-loved. Re-loved.</div>
+
+  <form id="gate">
+    <input id="pw" type="password" placeholder="Enter password" autocomplete="off" autofocus>
+    <button type="submit">Unlock</button>
+    <div class="err" id="err"></div>
+  </form>
+
+  <div class="deploying" id="dep">
+    <div class="bar"><i></i></div>
+    <p class="soft"><strong>V1 is deploying right now.</strong><br>
+    This page checks every 30 seconds and will become the app automatically — keep it open.</p>
+  </div>
+</div>
+<script>
+const HASH="c089d2675c3c38d361f19f064adbaacf98702b8ce744b790b1f583240a01f28f";
+const KEY="maanster.gate";
+async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+  return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+function unlocked(){document.getElementById("gate").style.display="none";
+  document.getElementById("dep").style.display="block";
+  setInterval(()=>location.reload(),30000)}
+if(localStorage.getItem(KEY)===HASH)unlocked();
+document.getElementById("gate").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const h=await sha(document.getElementById("pw").value);
+  if(h===HASH){localStorage.setItem(KEY,HASH);unlocked()}
+  else document.getElementById("err").textContent="Not it — try again."});
+</script>
+</body>
+</html>
